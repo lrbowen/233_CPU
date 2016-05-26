@@ -41,9 +41,9 @@ architecture Behavioral of Pixel_Generator is
     --Object signals for RGB, On and WE
     -----------------------------------
     -- Modify here to change objects --
-    signal obj0_rgb, obj1_rgb, obj2_rgb, obj3_rgb, obj4_rgb, obj5_rgb, obj6_rgb : std_logic_vector (7 downto 0);
-    signal obj0_on, obj1_on, obj2_on, obj3_on, obj4_on, obj5_on, obj6_on : std_logic;
-    signal obj0_we, obj1_we, obj2_we, obj3_we, obj4_we, obj5_we, obj6_we  : std_logic;
+    signal obj0_rgb, obj1_rgb, obj2_rgb, obj3_rgb, obj4_rgb, obj5_rgb, obj6_rgb, obj7_rgb : std_logic_vector (7 downto 0);
+    signal obj0_on, obj1_on, obj2_on, obj3_on, obj4_on, obj5_on, obj6_on, obj7_on : std_logic;
+    signal obj0_we, obj1_we, obj2_we, obj3_we, obj4_we, obj5_we, obj6_we, obj7_we  : std_logic;
     -----------------------------------
     --Object Components
      component piano
@@ -85,6 +85,18 @@ architecture Behavioral of Pixel_Generator is
             ON_OBJ   : out STD_LOGIC
         );
     end component;
+component Mouse_Off    
+    port (
+        VGACLK   : in STD_LOGIC;
+        X_POS_EN : in STD_LOGIC_VECTOR (7 downto 0);
+        Y_POS    : in STD_LOGIC_VECTOR (6 downto 0);
+        WE       : in STD_LOGIC;
+        X_PIXEL  : in STD_LOGIC_VECTOR (6 downto 0);
+        Y_PIXEL  : in STD_LOGIC_VECTOR (6 downto 0);
+        RGB_OBJ  : out STD_LOGIC_VECTOR (7 downto 0);
+        ON_OBJ   : out STD_LOGIC
+    );
+end component;
     component Sprite_MultiColor_Object
         port (
             VGACLK   : in STD_LOGIC;
@@ -210,7 +222,18 @@ Key6 : Rectangle_Object
          RGB_OBJ  => obj6_rgb,
          ON_OBJ   => obj6_on
      );
-     
+
+Pixel_Mouse_Off : Mouse_Off
+    port map (
+        VGACLK   => VGACLK,
+        X_POS_EN => X_POS_EN,
+        Y_POS    => Y_POS,
+        WE       => obj7_we,
+        X_PIXEL  => X_PIXEL,
+        Y_PIXEL  => Y_PIXEL,       
+        RGB_OBJ  => obj7_rgb,
+        ON_OBJ   => obj7_on
+  );
     
     ------------------------------------
     -- Guy Map - obj2
@@ -238,6 +261,7 @@ Key6 : Rectangle_Object
     obj4_we <= '1' when OBJ_ADDR = x"05" else '0';
     obj5_we <= '1' when OBJ_ADDR = x"06" else '0';
     obj6_we <= '1' when OBJ_ADDR = x"07" else '0';
+    obj7_we <= '1' when OBJ_ADDR = x"08" else '0';
 
     --End Decoder
     ---------------------------------------------------
@@ -249,7 +273,8 @@ Key6 : Rectangle_Object
                                      obj0_rgb,obj1_rgb,obj2_rgb,
                                      obj3_on, obj4_on, obj5_on,
                                      obj3_rgb,obj4_rgb,obj5_rgb,
-                                     obj6_on, obj6_rgb) 
+                                     obj6_on, obj6_rgb, obj7_on, 
+                                     obj7_rgb)
     begin
         if(VIDEO_ON = '0') then
             RGB_DATA_OUT <= (others => '0');
@@ -268,6 +293,8 @@ Key6 : Rectangle_Object
                 RGB_DATA_OUT <= obj5_rgb;
             elsif (obj6_on = '1') then
                 RGB_DATA_OUT <= obj6_rgb;
+            elsif (obj7_on = '1') then
+                RGB_DATA_OUT <= obj7_rgb;
             --Add elsif's here to add more objects
             else
                 RGB_DATA_OUT <= BACKGROUND_COLOR;

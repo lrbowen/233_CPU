@@ -25,7 +25,7 @@ use IEEE.STD_LOGIC_1164.ALL;
 use IEEE.STD_LOGIC_UNSIGNED.ALL;
 use IEEE.NUMERIC_STD.ALL;
 
-entity Mouse_Off is
+entity Mouse_On is
     Port ( 
         VGACLK   : in STD_LOGIC;
         X_POS_EN : in STD_LOGIC_VECTOR (7 downto 0); --7 bits of x pos, 1 bit enable
@@ -36,13 +36,13 @@ entity Mouse_Off is
         RGB_OBJ  : out STD_LOGIC_VECTOR (7 downto 0); --output color data
         ON_OBJ   : out STD_LOGIC                      --output active
     );
-end Mouse_Off;
+end Mouse_On;
 
-architecture Behavioral of Mouse_Off is
+architecture Behavioral of Mouse_On is
     --Sprite is bounded by a rectangle that is defined by top-left point, width and height
     --Note: All coordinates are in the 80x60 resolution scale
     constant OBJ_W : integer := 13;
-    constant OBJ_H : integer := 12;
+    constant OBJ_H : integer := 13;
     signal obj_x_reg   : std_logic_vector (6 downto 0) := (others => '0');
     signal obj_y_reg   : std_logic_vector (6 downto 0) := (others => '0');
     signal obj_en_reg  : std_logic := '0';
@@ -51,16 +51,16 @@ architecture Behavioral of Mouse_Off is
     type rom_type is array (0 to OBJ_H-1) of std_logic_vector (OBJ_W-1 downto 0);
     constant SPRITE_ROM : rom_type :=
     (
-        
         "0000000000000",
         "0000000000000",
-        "0000000001100",
-        "0000000001110",
-        "0000000011110",
-        "0000000111000",
+        "0000000000000",
+        "0000110001100",
+        "0000100001110",
+        "0000100011110",
+        "0011100111000",
+        "0011100001000",
         "0000000001000",
-        "0000001111000",
-        "1100000001000",
+        "1100001111000",
         "1111111011000",
         "1111110111110",
         "1000100101011"
@@ -75,17 +75,17 @@ architecture Behavioral of Mouse_Off is
     type color_vector is array (0 to OBJ_W-1) of std_logic_vector(7 downto 0);
     type color_rom_type is array (0 to OBJ_H-1) of color_vector;
     constant SPRITE_COLOR_ROM : color_rom_type :=
-    (       
-           
+(
             (x"00", x"00", x"00", x"00", x"00", x"00", x"00", x"00", x"00", x"00", x"00", x"00", x"00"),
             (x"00", x"00", x"00", x"00", x"00", x"00", x"00", x"00", x"00", x"00", x"00", x"00", x"00"),
-            (x"00", x"00", x"00", x"00", x"00", x"00", x"00", x"00", x"00", x"92", x"92", x"00", x"00"),
-            (x"00", x"00", x"00", x"00", x"00", x"00", x"00", x"00", x"00", x"92", x"92", x"92", x"00"),
-            (x"00", x"00", x"00", x"00", x"00", x"00", x"00", x"00", x"DB", x"92", x"92", x"92", x"00"),
-            (x"00", x"00", x"00", x"00", x"00", x"00", x"00", x"F2", x"92", x"92", x"00", x"00", x"00"),
+            (x"00", x"00", x"00", x"00", x"00", x"00", x"00", x"00", x"00", x"00", x"00", x"00", x"00"),
+            (x"00", x"00", x"00", x"00", x"E0", x"E0", x"00", x"00", x"00", x"92", x"92", x"00", x"00"),
+            (x"00", x"00", x"00", x"00", x"E0", x"00", x"00", x"00", x"00", x"92", x"92", x"92", x"00"),
+            (x"00", x"00", x"00", x"00", x"E0", x"00", x"00", x"00", x"DB", x"92", x"92", x"92", x"00"),
+            (x"00", x"00", x"E0", x"E0", x"E0", x"00", x"00", x"F2", x"92", x"92", x"00", x"00", x"00"),
+            (x"00", x"00", x"E0", x"E0", x"E0", x"00", x"00", x"00", x"00", x"92", x"00", x"00", x"00"),
             (x"00", x"00", x"00", x"00", x"00", x"00", x"00", x"00", x"00", x"92", x"00", x"00", x"00"),
-            (x"00", x"00", x"00", x"00", x"00", x"00", x"92", x"92", x"92", x"92", x"00", x"00", x"00"),
-            (x"FF", x"FF", x"00", x"00", x"00", x"00", x"00", x"00", x"00", x"92", x"00", x"00", x"00"),
+            (x"FF", x"FF", x"00", x"00", x"00", x"00", x"92", x"92", x"92", x"92", x"00", x"00", x"00"),
             (x"FF", x"FF", x"FF", x"FF", x"FF", x"FF", x"FF", x"00", x"92", x"92", x"00", x"00", x"00"),
             (x"FF", x"FF", x"FF", x"FF", x"FF", x"FF", x"00", x"92", x"92", x"92", x"F2", x"F2", x"92"),
             (x"FF", x"00", x"00", x"00", x"FF", x"00", x"00", x"92", x"00", x"92", x"00", x"F2", x"F2")
