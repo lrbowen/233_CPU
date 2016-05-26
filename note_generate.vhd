@@ -53,49 +53,49 @@ note_pick: process (KEY, CLK)
     begin
         if (rising_edge(CLK)) then
             if (KEY = A_NOTE) then
-                if (counter > 45455) then
+                if (counter < 45455) then
                     counter := counter + 1;
                 else
                     frequency <= not frequency;
                     counter := 0;
                 end if;
             elsif (KEY = B_NOTE) then
-                if (counter > 40496) then
+                if (counter < 40496) then
                     counter := counter + 1;
                 else
                     frequency <= not frequency;
                     counter := 0;
                 end if;
             elsif (KEY = C_NOTE) then
-                if (counter > 38222) then
+                if (counter < 38222) then
                     counter := counter + 1;
                 else
                     frequency <= not frequency;
                     counter := 0;
                 end if;
             elsif (KEY = D_NOTE) then
-                if (counter > 34053) then
+                if (counter < 34053) then
                     counter := counter + 1;
                 else
                     frequency <= not frequency;
                     counter := 0;
                 end if;
             elsif (KEY = E_NOTE) then
-                if (counter > 30337) then
+                if (counter < 30337) then
                     counter := counter + 1;
                 else
                     frequency <= not frequency;
                     counter := 0;
                 end if;
             elsif (KEY = F_NOTE) then
-                if (counter > 28634) then
+                if (counter < 28634) then
                     counter := counter + 1;
                 else
                     frequency <= not frequency;
                     counter := 0;
                 end if;
             elsif (KEY = G_NOTE) then
-                if (counter > 25510) then
+                if (counter < 25510) then
                     counter := counter + 1;
                 else
                     frequency <= not frequency;
